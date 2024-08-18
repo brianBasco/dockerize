@@ -54,3 +54,36 @@ docker volume prune
 
 Attention aux versions utilisées dans le projet
 A t-on besoin d'un dockerignore ? sinon db.sqlite3 va être copiée ainsi que les binaires python...
+
+Les commandes `RUN` et `CMD` dans un fichier Dockerfile ont des rôles distincts et s'utilisent dans des contextes différents. Voici les différences principales :
+
+### 1. **Commande `RUN` :**
+
+- La commande `RUN` est utilisée pour exécuter des instructions pendant la **construction** de l'image Docker.
+- Chaque commande `RUN` crée une nouvelle couche dans l'image Docker.
+- Typiquement, elle est utilisée pour installer des packages, copier des fichiers, ou préparer l'environnement. Par exemple :
+
+```dockerfile
+RUN apt-get update && apt-get install -y nginx
+```
+
+- Une fois l'image construite, les commandes `RUN` ne sont plus exécutées lorsque le conteneur est lancé.
+
+### 2. **Commande `CMD` :**
+
+- La commande `CMD` spécifie l'instruction par défaut à exécuter lorsque le conteneur est **démarré**.
+- Elle ne s’exécute **qu’au démarrage** du conteneur et n'est pas utilisée lors de la création de l'image.
+- Contrairement à `RUN`, `CMD` n'est pas utilisée pour préparer l'image, mais pour définir ce que le conteneur doit faire par défaut, par exemple :
+
+```dockerfile
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+- Si une commande est passée lors du démarrage du conteneur (`docker run`), elle remplacera la commande définie par `CMD`.
+
+### Résumé des différences :
+- **`RUN`** est exécuté lors de la **construction** de l'image, tandis que **`CMD`** est exécuté lorsque le conteneur est **démarré**.
+- **`RUN`** est utilisé pour installer des dépendances ou préparer l'environnement dans l'image.
+- **`CMD`** définit la commande par défaut à exécuter dans le conteneur.
+
+En résumé, `RUN` construit l'image, tandis que `CMD` définit ce que fait le conteneur lorsqu'il démarre.
